@@ -29,8 +29,8 @@ const mockData = {
 
 export function DashboardPage() {
   const baseUrl = getApiBaseUrl()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [, setLoading] = useState(false)
+  const [, setError] = useState<string | null>(null)
   const [stats, setStats] = useState(mockData.stats)
   const [enrollment, setEnrollment] = useState(mockData.enrollmentTrend)
   const [perfByClass, setPerfByClass] = useState(mockData.performanceByClass)

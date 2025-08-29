@@ -147,8 +147,8 @@ export function AnalyticsPage() {
 
   // Super Admin: live high-level metrics
   const baseUrl = getApiBaseUrl()
-  const [saLoading, setSaLoading] = useState(false)
-  const [saError, setSaError] = useState<string | null>(null)
+  const [, setSaLoading] = useState(false)
+  const [, setSaError] = useState<string | null>(null)
   const [saStats, setSaStats] = useState<{ activeUsers7d: number; submissions7d: number; topLanguage?: string; newLessons30d: number; activeSubscriptions: number }>({ activeUsers7d: 0, submissions7d: 0, topLanguage: '-', newLessons30d: 0, activeSubscriptions: 0 })
 
   useEffect(() => {
@@ -575,7 +575,7 @@ export function AnalyticsPage() {
                 ) : (
                   filtered.map((s) => {
                     const a = s.performance?.assessments || {}
-                    const e = edits[s.id] || {}
+                    const _e = edits[s.id] || {}
                     return (
                       <tr key={s.id} className="hover:bg-gray-50">
                         <td className="px-4 py-2 text-sm text-gray-900">{s.name}</td>

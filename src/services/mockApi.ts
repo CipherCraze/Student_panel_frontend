@@ -515,7 +515,7 @@ export const mockSettingsApi = {
 }
 
 export const mockExportApi = {
-  exportStudents: async (filters?: any): Promise<Blob> => {
+  exportStudents: async (_filters?: any): Promise<Blob> => {
     await delay(2000)
     const csvContent = 'Name,Class,Accuracy,Lessons,XP\n' +
       mockStudents.map(s => 
@@ -533,7 +533,7 @@ export const mockExportApi = {
     return new Blob([csvContent], { type: 'text/csv' })
   },
 
-  exportAnalytics: async (dateRange?: { start: string; end: string }): Promise<Blob> => {
+  exportAnalytics: async (_dateRange?: { start: string; end: string }): Promise<Blob> => {
     await delay(2000)
     const csvContent = 'Metric,Value\n' +
       'Total Schools,' + mockSchools.length + '\n' +
