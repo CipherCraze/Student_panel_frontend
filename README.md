@@ -1,0 +1,156 @@
+# SpeakGenie - Centralized Admin Panel
+
+A comprehensive admin panel for managing multiple schools using the SpeakGenie language learning app. Built with React, Vite, TypeScript, and Tailwind CSS.
+
+## 🚀 Features
+
+### 🏫 School Management
+- **Easy School Onboarding**: Add new schools with just a few clicks
+- **School Profile Management**: Manage school details, admin contacts, and board information
+- **Access Control**: Unique login credentials for each school
+- **Real-time Status Tracking**: Monitor active/inactive school status
+
+### 👥 Student Management
+- **Student Directory**: Complete list of enrolled students across all schools
+- **Class-wise Organization**: View students organized by their classes
+- **Performance Tracking**: Individual student performance metrics
+- **Detailed Student Profiles**: Comprehensive view of each student's progress
+
+### 📊 Analytics & Reporting
+- **Performance Dashboard**: Real-time insights into student performance
+- **Skill Area Analysis**: Track progress in vocabulary, grammar, pronunciation, listening, and speaking
+- **Engagement Metrics**: Monitor time spent, lessons completed, and XP points
+- **School Comparisons**: Compare performance across different schools
+
+### 🎯 Key Metrics Tracked
+- **Accuracy Percentage**: Overall learning accuracy for each student
+- **Lessons Completed**: Number of lessons finished
+- **Time Spent**: Total time spent on the app
+- **XP Points**: Gamification points earned
+- **Skill-specific Scores**: Individual scores for different language skills
+
+## 🛠 Technology Stack
+
+- **Frontend Framework**: React 18 with Vite
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: Custom components with Headless UI
+- **Icons**: Heroicons & Lucide React
+- **Charts**: Recharts
+- **Routing**: React Router DOM
+- **Forms**: React Hook Form with Yup validation
+- **State Management**: React Context API
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v20.19.0 or higher recommended)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:5173](http://localhost:5173) in your browser
+
+### Demo Login Credentials
+
+- **Super Admin**: 
+  - Email: `super@admin.com`
+  - Password: `password`
+
+- **School Admin**: 
+  - Email: `school@admin.com`
+  - Password: `password`
+
+## 📁 Project Structure
+
+```
+src/
+├── components/
+│   ├── auth/           # Authentication components
+│   ├── dashboard/      # Dashboard and overview components
+│   ├── layout/         # Layout components (sidebar, header)
+│   ├── schools/        # School management components
+│   ├── students/       # Student management components
+│   ├── analytics/      # Analytics and reporting components
+│   ├── settings/       # Settings and configuration
+│   └── ui/            # Reusable UI components
+├── contexts/          # React context providers
+├── lib/              # Utility functions
+├── types/            # TypeScript type definitions
+└── assets/           # Static assets
+```
+
+## 🎨 Design System
+
+The app uses a custom design system with:
+- **Primary Colors**: Blue shades for main actions and branding
+- **Secondary Colors**: Gray shades for backgrounds and text
+- **Status Colors**: Green for success, Red for errors, Yellow for warnings
+- **Typography**: Inter font family
+- **Responsive Design**: Mobile-first approach with Tailwind breakpoints
+
+## 📊 Mock Data
+
+The application currently uses mock data to demonstrate functionality:
+- Sample schools with different boards (CBSE, ICSE, State Board)
+- Student performance data across multiple skill areas
+- Analytics and engagement metrics
+- Historical trend data for charts and reports
+
+## 🔐 Authentication
+
+The app includes a mock authentication system that supports:
+- **Super Admin**: Full access to all schools and system-wide analytics
+- **School Admin**: Access limited to their specific school's data
+- **Session Management**: Persistent login sessions using localStorage
+- **Route Protection**: Automatic redirection for unauthenticated users
+
+## 📈 Performance Features
+
+- **Real-time Updates**: Live data synchronization
+- **Responsive Charts**: Interactive charts using Recharts
+- **Fast Navigation**: Client-side routing with React Router
+- **Optimized Builds**: Vite for fast development and optimized production builds
+
+## 🚀 Deployment
+
+To build for production:
+
+```bash
+npm run build
+```
+
+The built files will be in the `dist` directory, ready for deployment to any static hosting service.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+## 🎯 Future Enhancements
+
+- **Real API Integration**: Connect to actual backend services
+- **Advanced Analytics**: More detailed reporting and insights
+- **Notification System**: Real-time notifications for important events
+- **Data Export**: Export capabilities for reports and data
+- **Multi-language Support**: Internationalization for different languages
+- **Advanced User Roles**: More granular permission system
+#
