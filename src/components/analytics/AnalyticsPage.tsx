@@ -575,7 +575,6 @@ export function AnalyticsPage() {
                 ) : (
                   filtered.map((s) => {
                     const a = s.performance?.assessments || {}
-                    const _e = edits[s.id] || {}
                     return (
                       <tr key={s.id} className="hover:bg-gray-50">
                         <td className="px-4 py-2 text-sm text-gray-900">{s.name}</td>
