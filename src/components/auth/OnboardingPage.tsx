@@ -53,7 +53,7 @@ const OnboardingPage: React.FC = () => {
       setFormData(prev => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof OnboardingData],
+          ...(prev as any)[parent],
           [child]: value
         }
       }))
