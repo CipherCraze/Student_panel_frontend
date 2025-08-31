@@ -19,6 +19,9 @@ dist-ssr
 .DS_Store
 *.suo
 *.ntvs*
-*.njsproj
+dist
+	# environment variables
+	.env
+
 *.sln
 *.sw?
