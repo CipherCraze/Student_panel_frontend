@@ -380,7 +380,7 @@ const StudentManagementPage: React.FC = () => {
                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                          {student.contactNumber || 'N/A'}
                        </td>
-                       <td className="px-6 py-4 whitespace-nowrap text-sm text-sm text-gray-500 dark:text-gray-300">
+                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                          {student.enrollmentDate}
                        </td>
                                               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

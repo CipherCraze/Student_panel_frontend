@@ -221,7 +221,6 @@ export function SchoolAdminDashboard() {
   const [allStudents, setAllStudents] = useState<any[]>([])
   const [topStudents, setTopStudents] = useState<any[]>([])
   const [classwiseData, setClasswiseData] = useState<any[]>([])
-  const [activities, setActivities] = useState<any[]>([])
 
   // Comprehensive data loading for school admin
   useEffect(() => {
@@ -344,10 +343,10 @@ export function SchoolAdminDashboard() {
         // Process recent activities
         if (recentActivities.status === 'fulfilled') {
           console.log('Recent activities loaded:', recentActivities.value.length)
-          setActivities(recentActivities.value)
+          // Activities data loaded but not currently used in UI
         } else {
           console.warn('Recent activities loading failed:', recentActivities.reason)
-          setActivities([])
+          // Activities loading failed but not critical
         }
 
       } catch (e: any) {

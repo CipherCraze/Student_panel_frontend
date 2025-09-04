@@ -320,7 +320,7 @@ export const mockSchoolsApi = {
   },
 
   // Get school performance metrics (mock)
-  getPerformanceMetrics: async (schoolId: string): Promise<any> => {
+  getPerformanceMetrics: async (_schoolId: string): Promise<any> => {
     await delay(500)
     return {
       metrics: [
