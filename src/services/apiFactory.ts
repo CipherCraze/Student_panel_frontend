@@ -3,12 +3,35 @@ import * as mockApi from './mockApi'
 
 // Determine which API to use based on environment
 // IMPORTANT: Always use mock API on Vercel deployments
-const isVercelDeployment = window.location.hostname.includes('vercel.app')
-const isProduction = import.meta.env.PROD || window.location.hostname !== 'localhost'
+const isVercelDeployment = typeof window !== 'undefined' && (
+  window.location.hostname.includes('vercel.app') || 
+  window.location.hostname.includes('vercel.com') ||
+  window.location.hostname.includes('student-panel-frontend') // Your specific deployment
+)
+const isProduction = import.meta.env.PROD || (typeof window !== 'undefined' && window.location.hostname !== 'localhost')
+
+// Force mock API for all production deployments unless explicitly set to false
+// This ensures Vercel deployments always use mock API to avoid CORS issues
 const useMockApi = isVercelDeployment || 
                    import.meta.env.VITE_MOCK_API === 'true' || 
-                   (!import.meta.env.VITE_API_URL && isProduction) ||
-                   (isProduction && import.meta.env.VITE_MOCK_API !== 'false')
+                   (isProduction && import.meta.env.VITE_MOCK_API !== 'false') ||
+                   (!import.meta.env.VITE_API_URL && isProduction)
+
+// Debug logging (will be removed in production builds)
+if (typeof window !== 'undefined') {
+  if (import.meta.env.DEV) {
+    console.log('🔧 API Factory Debug:', {
+      hostname: window.location.hostname,
+      isVercelDeployment,
+      isProduction,
+      VITE_MOCK_API: import.meta.env.VITE_MOCK_API,
+      VITE_API_URL: import.meta.env.VITE_API_URL,
+      useMockApi
+    })
+  } else if (isProduction) {
+    console.log('🚀 Production API Mode:', useMockApi ? 'Mock API' : 'Real API')
+  }
+}
 
 // API Factory - returns either real or mock API based on configuration
 export const apiFactory = {
