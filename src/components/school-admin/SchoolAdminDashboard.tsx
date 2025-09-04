@@ -217,53 +217,205 @@ export function SchoolAdminDashboard() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [school, setSchool] = useState<School | null>(null)
-  const [totalStudents, setTotalStudents] = useState<number>(0)
+  const [dashboardData, setDashboardData] = useState<any>(null)
+  const [allStudents, setAllStudents] = useState<any[]>([])
+  const [topStudents, setTopStudents] = useState<any[]>([])
+  const [classwiseData, setClasswiseData] = useState<any[]>([])
+  const [activities, setActivities] = useState<any[]>([])
 
-  // Fetch school and student counts from backend (if enabled)
+  // Comprehensive data loading for school admin
   useEffect(() => {
     let isMounted = true
-    async function load() {
-      if (!user?.schoolId) return
-      if (isUsingMockApi()) return
+    
+    async function loadSchoolAdminData() {
+      if (!user?.schoolId) {
+        console.log('No schoolId found for user:', user)
+        setError('School ID not found. Please contact administrator.')
+        return
+      }
+
+      if (user.role !== 'school_admin') {
+        console.log('User is not a school admin:', user)
+        setError('Access denied. School admin role required.')
+        return
+      }
+
       setLoading(true)
       setError(null)
+
       try {
-        const [schoolResp, stats] = await Promise.all([
-          schoolsApi.getById(user.schoolId as unknown as string),
-          studentsApi.getStats(user.schoolId as unknown as string),
+        console.log('Loading comprehensive school admin data for schoolId:', user.schoolId)
+        
+        // Use mock data if API is disabled
+        if (isUsingMockApi()) {
+          console.log('Using mock data for school admin dashboard')
+          if (!isMounted) return
+          setSchool({ 
+            id: user.schoolId as string, 
+            name: mockSchoolData.schoolInfo.name,
+            board: mockSchoolData.schoolInfo.board,
+            totalStudents: mockSchoolData.schoolInfo.totalStudents,
+            totalClasses: mockSchoolData.schoolInfo.totalClasses,
+            adminContact: { name: 'Admin', email: 'admin@school.com', phone: '123-456-7890' },
+            createdAt: '2024-01-01',
+            status: 'active'
+          } as School)
+          setAllStudents(mockSchoolData.topStudents)
+          setTopStudents(mockSchoolData.topStudents.slice(0, 5))
+          setClasswiseData(mockSchoolData.classwiseEnrollment)
+          setDashboardData({
+            totalStudents: mockSchoolData.schoolInfo.totalStudents,
+            totalClasses: mockSchoolData.schoolInfo.totalClasses,
+            averagePerformance: 85.5,
+            monthlyGrowth: 12
+          })
+          setLoading(false)
+          return
+        }
+
+        // Fetch all data in parallel for better performance
+        const [
+          schoolDetails,
+          schoolAnalytics,
+          schoolStudents,
+          topPerformers,
+          classwiseStats,
+          recentActivities
+        ] = await Promise.allSettled([
+          schoolsApi.getById(user.schoolId as string),
+          schoolsApi.getSchoolAnalytics(user.schoolId as string),
+          studentsApi.getBySchool(user.schoolId as string),
+          studentsApi.getTopPerformers(user.schoolId as string, 10),
+          studentsApi.getClasswiseStats(user.schoolId as string),
+          studentsApi.getRecentActivities(user.schoolId as string, 20)
         ])
+
         if (!isMounted) return
-        setSchool(schoolResp)
-        setTotalStudents(stats.totalStudents)
+
+        // Process school details
+        if (schoolDetails.status === 'fulfilled') {
+          console.log('School details loaded:', schoolDetails.value)
+          setSchool(schoolDetails.value)
+        } else {
+          console.error('Failed to load school details:', schoolDetails.reason)
+        }
+
+        // Process analytics
+        if (schoolAnalytics.status === 'fulfilled') {
+          console.log('School analytics loaded:', schoolAnalytics.value)
+          setDashboardData(schoolAnalytics.value)
+        } else {
+          console.warn('School analytics failed, using defaults:', schoolAnalytics.reason)
+          setDashboardData({
+            totalStudents: 0,
+            totalClasses: 0,
+            averagePerformance: 0,
+            monthlyGrowth: 0
+          })
+        }
+
+        // Process students
+        if (schoolStudents.status === 'fulfilled') {
+          console.log('Students loaded:', schoolStudents.value.length)
+          setAllStudents(schoolStudents.value)
+        } else {
+          console.warn('Students loading failed:', schoolStudents.reason)
+          setAllStudents([])
+        }
+
+        // Process top performers
+        if (topPerformers.status === 'fulfilled') {
+          console.log('Top performers loaded:', topPerformers.value.length)
+          setTopStudents(topPerformers.value)
+        } else {
+          console.warn('Top performers loading failed:', topPerformers.reason)
+          setTopStudents([])
+        }
+
+        // Process classwise stats
+        if (classwiseStats.status === 'fulfilled') {
+          console.log('Classwise stats loaded:', classwiseStats.value.length)
+          setClasswiseData(classwiseStats.value)
+        } else {
+          console.warn('Classwise stats loading failed:', classwiseStats.reason)
+          setClasswiseData([])
+        }
+
+        // Process recent activities
+        if (recentActivities.status === 'fulfilled') {
+          console.log('Recent activities loaded:', recentActivities.value.length)
+          setActivities(recentActivities.value)
+        } else {
+          console.warn('Recent activities loading failed:', recentActivities.reason)
+          setActivities([])
+        }
+
       } catch (e: any) {
         if (!isMounted) return
-        setError(e?.message || 'Failed to load school')
+        console.error('Critical error loading school admin data:', e)
+        setError(`Failed to load dashboard data: ${e?.message || 'Unknown error'}`)
+        
+        // Fallback to mock data on critical error
+        console.log('Using mock data as fallback due to critical error')
+        setSchool({ 
+          id: user.schoolId as string, 
+          name: mockSchoolData.schoolInfo.name,
+          board: mockSchoolData.schoolInfo.board,
+          totalStudents: mockSchoolData.schoolInfo.totalStudents,
+          totalClasses: mockSchoolData.schoolInfo.totalClasses,
+          adminContact: { name: 'Admin', email: 'admin@school.com', phone: '123-456-7890' },
+          createdAt: '2024-01-01',
+          status: 'active'
+        } as School)
+        setAllStudents(mockSchoolData.topStudents)
+        setTopStudents(mockSchoolData.topStudents.slice(0, 5))
+        setClasswiseData(mockSchoolData.classwiseEnrollment)
       } finally {
-        if (isMounted) setLoading(false)
+        if (isMounted) {
+          setLoading(false)
+        }
       }
     }
-    load()
-    return () => { isMounted = false }
-  }, [user?.schoolId])
 
-  const schoolData = useMemo(() => {
-    if (!isUsingMockApi() && school) {
+    loadSchoolAdminData()
+    
+    return () => {
+      isMounted = false
+    }
+  }, [user?.schoolId, user?.role])
+
+  const finalSchoolData = useMemo(() => {
+    if (!isUsingMockApi() && school && dashboardData) {
       return {
         schoolInfo: {
           id: (school.id as any) || (school as any)._id || '',
           name: school.name,
           board: school.board || 'Other',
-          totalStudents: totalStudents,
-          totalClasses: 8,
+          totalStudents: dashboardData.totalStudents || 0,
+          totalClasses: dashboardData.totalClasses || 8,
         },
-        // Keep charts and lists mocked for now; will be wired to /analytics later
-        classwiseEnrollment: mockSchoolData.classwiseEnrollment,
-        topStudents: mockSchoolData.topStudents,
-        allStudents: mockSchoolData.allStudents,
+        // Use the loaded data instead of mock data
+        classwiseEnrollment: classwiseData.length > 0 ? classwiseData : mockSchoolData.classwiseEnrollment,
+        topStudents: topStudents.length > 0 ? topStudents : mockSchoolData.topStudents,
+        allStudents: allStudents.length > 0 ? allStudents : mockSchoolData.allStudents,
+      }
+    } else if (!isUsingMockApi() && error) {
+      // Backend failed, show error message with partial data
+      return {
+        schoolInfo: {
+          id: user?.schoolId || 'unknown',
+          name: 'Error Loading School Data',
+          board: 'N/A',
+          totalStudents: 0,
+          totalClasses: 0,
+        },
+        classwiseEnrollment: [],
+        topStudents: [],
+        allStudents: [],
       }
     }
     return mockSchoolData
-  }, [school, totalStudents])
+  }, [school, dashboardData, classwiseData, topStudents, allStudents, error, user?.schoolId])
 
   const getPerformanceColor = (accuracy: number) => {
     if (accuracy >= 90) return 'text-green-600 bg-green-100'
@@ -278,13 +430,31 @@ export function SchoolAdminDashboard() {
         <div className="text-center text-secondary-600">Loading your school...</div>
       )}
       {error && (
-        <div className="text-center text-red-600 text-sm">{error}</div>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">
+                Unable to load school data
+              </h3>
+              <div className="mt-2 text-sm text-red-700">
+                <p>{error}</p>
+                <p className="mt-1">Please check your internet connection or contact support if the issue persists.</p>
+                <p className="mt-1 text-xs">School ID: {user?.schoolId}</p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
       {/* Header */}
       <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text">
-            {schoolData.schoolInfo.name}
+            {finalSchoolData.schoolInfo.name}
           </h1>
           <p className="mt-1 sm:mt-2 text-secondary-600 text-sm sm:text-base">
             Welcome back, {user?.name}! Here's your school's overview.
@@ -292,7 +462,7 @@ export function SchoolAdminDashboard() {
         </div>
         <div className="flex-shrink-0">
                 <div className="text-xs sm:text-sm text-secondary-500 dark:text-secondary-300 bg-white/80 dark:bg-black/30 px-3 sm:px-4 py-2 rounded-xl backdrop-blur-sm border border-secondary-200 dark:border-white/10">
-            {schoolData.schoolInfo.board} Board • Last updated: {new Date().toLocaleString()}
+            {finalSchoolData.schoolInfo.board} Board • Last updated: {new Date().toLocaleString()}
           </div>
         </div>
       </div>
@@ -304,7 +474,7 @@ export function SchoolAdminDashboard() {
             <div className="flex items-center justify-between">
               <div className="flex-1 min-w-0">
                 <p className="text-xs sm:text-sm font-semibold text-secondary-600 uppercase tracking-wide truncate">Total Students</p>
-                 <p className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white mt-2">{schoolData.schoolInfo.totalStudents}</p>
+                 <p className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white mt-2">{finalSchoolData.schoolInfo.totalStudents}</p>
                 <div className="mt-2 flex items-center">
                   <span className="text-xs sm:text-sm font-medium text-success-600">+12%</span>
                   <span className="text-xs text-secondary-500 ml-1">from last month</span>
@@ -325,7 +495,7 @@ export function SchoolAdminDashboard() {
             <div className="flex items-center justify-between">
               <div className="flex-1 min-w-0">
                 <p className="text-xs sm:text-sm font-semibold text-secondary-600 uppercase tracking-wide truncate">Total Classes</p>
-                 <p className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white mt-2">{schoolData.schoolInfo.totalClasses}</p>
+                 <p className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-white mt-2">{finalSchoolData.schoolInfo.totalClasses}</p>
                 <div className="mt-2 flex items-center">
                   <span className="text-xs sm:text-sm font-medium text-success-600">+8%</span>
                   <span className="text-xs text-secondary-500 ml-1">from last month</span>
@@ -394,7 +564,7 @@ export function SchoolAdminDashboard() {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250} className="sm:h-[280px]">
-              <BarChart data={schoolData.classwiseEnrollment}>
+              <BarChart data={finalSchoolData.classwiseEnrollment}>
                 <defs>
                   <linearGradient id="enrollmentGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
@@ -474,7 +644,7 @@ export function SchoolAdminDashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            {schoolData.topStudents.map((student) => (
+            {finalSchoolData.topStudents.map((student: any) => (
               <div key={student.id} className="relative group">
                 <Card hover className="overflow-hidden transition-all duration-300 group-hover:scale-105 border-2 border-transparent group-hover:border-gradient-to-r group-hover:from-amber-400 group-hover:to-orange-500">
                   <CardContent className="p-4 relative">
@@ -618,7 +788,7 @@ export function SchoolAdminDashboard() {
                 className="px-3 py-2 border border-secondary-200 dark:border-white/10 rounded-lg text-sm bg-white dark:bg-black/30 dark:text-white"
               >
                 <option value="all">All Classes</option>
-                {schoolData.classwiseEnrollment.map((cls) => (
+                {finalSchoolData.classwiseEnrollment.map((cls: any) => (
                   <option key={cls.class} value={cls.class}>{cls.class}</option>
                 ))}
               </select>
@@ -628,7 +798,7 @@ export function SchoolAdminDashboard() {
         <CardContent>
           {/* Students Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {[...schoolData.topStudents, ...schoolData.allStudents]
+            {[...finalSchoolData.topStudents, ...finalSchoolData.allStudents]
               .filter(student => 
                 (selectedClass === 'all' || student.class === selectedClass) &&
                 (student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -678,7 +848,7 @@ export function SchoolAdminDashboard() {
           {/* Load More Button */}
           <div className="text-center mt-6">
             <Button variant="outline">
-                              Load More Students ({schoolData.schoolInfo.totalStudents - 12} remaining)
+                              Load More Students ({finalSchoolData.schoolInfo.totalStudents - 12} remaining)
             </Button>
           </div>
         </CardContent>

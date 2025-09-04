@@ -130,6 +130,15 @@ export const schoolsApi = {
   getStats: async (): Promise<{ totalSchools: number; activeSchools: number }> => {
     return apiRequest('/schools/stats')
   },
+
+  getSchoolAnalytics: async (schoolId: string): Promise<{
+    totalStudents: number;
+    totalClasses: number;
+    averagePerformance: number;
+    monthlyGrowth: number;
+  }> => {
+    return apiRequest(`/schools/${schoolId}/analytics`)
+  },
 }
 
 // Students API
@@ -183,6 +192,27 @@ export const studentsApi = {
       averageAccuracy: ov.averageAccuracy || 0,
       totalLessons: ov.totalLessons || 0,
     }
+  },
+
+  getBySchool: async (schoolId: string): Promise<Student[]> => {
+    return apiRequest(`/students/school/${schoolId}`)
+  },
+
+  getTopPerformers: async (schoolId?: string, limit: number = 10): Promise<Student[]> => {
+    const params = new URLSearchParams({ limit: String(limit) })
+    if (schoolId) params.append('schoolId', schoolId)
+    return apiRequest(`/students/top-performers?${params}`)
+  },
+
+  getClasswiseStats: async (schoolId?: string): Promise<any[]> => {
+    const params = schoolId ? `?schoolId=${schoolId}` : ''
+    return apiRequest(`/students/classwise-stats${params}`)
+  },
+
+  getRecentActivities: async (schoolId?: string, limit: number = 20): Promise<any[]> => {
+    const params = new URLSearchParams({ limit: String(limit) })
+    if (schoolId) params.append('schoolId', schoolId)
+    return apiRequest(`/students/recent-activities?${params}`)
   },
 }
 

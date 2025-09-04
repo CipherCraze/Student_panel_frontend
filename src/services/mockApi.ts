@@ -288,6 +288,51 @@ export const mockSchoolsApi = {
       activeSchools: mockSchools.filter(s => s.status === 'active').length,
     }
   },
+
+  // Get detailed school information with analytics (mock)
+  getSchoolDetails: async (schoolId: string): Promise<any> => {
+    await delay(500)
+    const school = mockSchools.find(s => s.id === schoolId)
+    if (!school) throw new Error('School not found')
+    return {
+      ...school,
+      analytics: {
+        totalStudents: mockStudents.filter(s => s.schoolId === schoolId).length,
+        totalClasses: 8,
+        averagePerformance: 85.5,
+        monthlyGrowth: 12
+      }
+    }
+  },
+
+  // Get school analytics (mock)
+  getSchoolAnalytics: async (schoolId: string): Promise<any> => {
+    await delay(500)
+    const schoolStudents = mockStudents.filter(s => s.schoolId === schoolId)
+    return {
+      totalStudents: schoolStudents.length,
+      totalClasses: 8,
+      averagePerformance: schoolStudents.length > 0 
+        ? Math.round(schoolStudents.reduce((sum, s) => sum + s.performance.accuracyPercentage, 0) / schoolStudents.length)
+        : 0,
+      monthlyGrowth: Math.random() * 20 + 5 // Random growth between 5-25%
+    }
+  },
+
+  // Get school performance metrics (mock)
+  getPerformanceMetrics: async (schoolId: string): Promise<any> => {
+    await delay(500)
+    return {
+      metrics: [
+        { month: 'Jan', performance: 82 },
+        { month: 'Feb', performance: 85 },
+        { month: 'Mar', performance: 88 },
+        { month: 'Apr', performance: 87 },
+        { month: 'May', performance: 90 }
+      ],
+      trends: ['improving', 'vocabulary_strong', 'grammar_needs_work']
+    }
+  },
 }
 
 export const mockStudentsApi = {
@@ -368,6 +413,89 @@ export const mockStudentsApi = {
         : 0,
       totalLessons: students.reduce((sum, s) => sum + s.performance.lessonsCompleted, 0),
     }
+  },
+
+  // Get students by school (mock)
+  getBySchool: async (schoolId: string): Promise<Student[]> => {
+    await delay(500)
+    return mockStudents.filter(s => s.schoolId === schoolId)
+  },
+
+  // Get top performing students (mock)
+  getTopPerformers: async (schoolId?: string, limit: number = 10): Promise<Student[]> => {
+    await delay(500)
+    let students = schoolId ? mockStudents.filter(s => s.schoolId === schoolId) : mockStudents
+    return students
+      .sort((a, b) => b.performance.accuracyPercentage - a.performance.accuracyPercentage)
+      .slice(0, limit)
+  },
+
+  // Get class-wise statistics (mock)
+  getClasswiseStats: async (schoolId?: string): Promise<any[]> => {
+    await delay(500)
+    const students = schoolId ? mockStudents.filter(s => s.schoolId === schoolId) : mockStudents
+    const classwiseData: { [key: string]: any } = {}
+    
+    students.forEach(student => {
+      if (!classwiseData[student.class]) {
+        classwiseData[student.class] = {
+          class: student.class,
+          students: 0,
+          totalAccuracy: 0
+        }
+      }
+      classwiseData[student.class].students++
+      classwiseData[student.class].totalAccuracy += student.performance.accuracyPercentage
+    })
+
+    return Object.values(classwiseData).map((cls: any) => ({
+      ...cls,
+      accuracy: cls.students > 0 ? Math.round(cls.totalAccuracy / cls.students) : 0
+    }))
+  },
+
+  // Get performance distribution (mock)
+  getPerformanceDistribution: async (schoolId?: string): Promise<any> => {
+    await delay(500)
+    const students = schoolId ? mockStudents.filter(s => s.schoolId === schoolId) : mockStudents
+    const distribution = {
+      excellent: students.filter(s => s.performance.accuracyPercentage >= 90).length,
+      good: students.filter(s => s.performance.accuracyPercentage >= 80 && s.performance.accuracyPercentage < 90).length,
+      average: students.filter(s => s.performance.accuracyPercentage >= 70 && s.performance.accuracyPercentage < 80).length,
+      needsImprovement: students.filter(s => s.performance.accuracyPercentage < 70).length
+    }
+    
+    return {
+      distribution: [
+        { name: 'Excellent (90-100%)', value: distribution.excellent, color: '#10b981' },
+        { name: 'Good (80-89%)', value: distribution.good, color: '#3b82f6' },
+        { name: 'Average (70-79%)', value: distribution.average, color: '#f59e0b' },
+        { name: 'Needs Improvement', value: distribution.needsImprovement, color: '#ef4444' }
+      ],
+      averages: {
+        vocabulary: 85,
+        grammar: 87,
+        pronunciation: 82,
+        listening: 89,
+        speaking: 84
+      }
+    }
+  },
+
+  // Get recent activities (mock)
+  getRecentActivities: async (schoolId?: string, limit: number = 20): Promise<any[]> => {
+    await delay(500)
+    const students = schoolId ? mockStudents.filter(s => s.schoolId === schoolId) : mockStudents
+    const activities = students.slice(0, limit).map((student, index) => ({
+      id: `activity-${index}`,
+      studentId: student.id,
+      studentName: student.name,
+      activity: ['Completed lesson', 'Achieved milestone', 'Improved accuracy', 'Started new module'][Math.floor(Math.random() * 4)],
+      timestamp: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+      details: `${student.performance.accuracyPercentage}% accuracy`
+    }))
+    
+    return activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
   },
 }
 
