@@ -110,20 +110,24 @@ export function LoginPage() {
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between">
                   <span className="text-secondary-600">Super Admin:</span>
-                  <span className="font-mono text-secondary-800">super@admin.com</span>
+                  <span className="font-mono text-secondary-800">superadmin@speakgenie.com</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-secondary-600">School Admin:</span>
                   <span className="font-mono text-secondary-800">school@admin.com</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-secondary-600">Password:</span>
+                  <span className="text-secondary-600">Super Password:</span>
+                  <span className="font-mono text-secondary-800">superadmin123</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-secondary-600">School Password:</span>
                   <span className="font-mono text-secondary-800">password</span>
                 </div>
               </div>
               <div className="mt-3 p-2 bg-blue-50 rounded-lg border border-blue-200">
                 <p className="text-xs text-blue-700">
-                  <strong>super@admin.com</strong> → Full Admin Panel with all schools<br />
+                  <strong>superadmin@speakgenie.com</strong> → Full Admin Panel with all schools<br />
                   <strong>school@admin.com</strong> → School-specific dashboard
                 </p>
               </div>

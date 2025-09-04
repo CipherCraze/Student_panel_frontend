@@ -4,10 +4,10 @@ import type { School, Student, User, DashboardStats } from '../types'
 let mockUsers: User[] = [
   {
     id: '1',
-    email: 'super@admin.com',
+    email: 'superadmin@speakgenie.com',
     name: 'Super Admin',
     role: 'super_admin',
-    password: 'password', // Default password for demo users
+    password: 'superadmin123', // Matches backend configuration
   },
   {
     id: '2',

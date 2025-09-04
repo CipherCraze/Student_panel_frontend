@@ -2,8 +2,13 @@ import * as realApi from './api'
 import * as mockApi from './mockApi'
 
 // Determine which API to use based on environment
-// IMPORTANT: Only VITE_MOCK_API controls mock usage so we can use real backend in dev
-const useMockApi = import.meta.env.VITE_MOCK_API === 'true' || !import.meta.env.VITE_API_URL
+// IMPORTANT: Always use mock API on Vercel deployments
+const isVercelDeployment = window.location.hostname.includes('vercel.app')
+const isProduction = import.meta.env.PROD || window.location.hostname !== 'localhost'
+const useMockApi = isVercelDeployment || 
+                   import.meta.env.VITE_MOCK_API === 'true' || 
+                   (!import.meta.env.VITE_API_URL && isProduction) ||
+                   (isProduction && import.meta.env.VITE_MOCK_API !== 'false')
 
 // API Factory - returns either real or mock API based on configuration
 export const apiFactory = {
