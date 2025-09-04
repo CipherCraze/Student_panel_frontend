@@ -1,27 +1,44 @@
+# Dependencies
+node_modules/
+Student_panel_backend/node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+Student_panel_backend/dist/
+
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+Student_panel_backend/.env
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
+Student_panel_backend/logs/
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
-dist
-	# environment variables
-	.env
-
+*.njsproj*
 *.sln
 *.sw?
+
+# Backend specific
+Student_panel_backend/uploads/
+Student_panel_backend/temp/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
