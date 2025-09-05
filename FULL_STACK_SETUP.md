@@ -18,27 +18,24 @@ Student_panel_frontend/
 
 ## 🚀 Available Commands
 
-### Development (Run both services)
+### Development (Full-Stack on Vercel)
 ```bash
-npm run dev:full          # Start both frontend (5173) and backend (5000)
+npm run dev               # Start Vercel dev server with API routes (RECOMMENDED)
+npm run dev:full          # Same as above - full-stack Vercel development
 ```
 
-### Individual Services
+### Legacy Development (Separate Frontend/Backend)
 ```bash
-npm run dev              # Frontend only (http://localhost:5173)
-npm run dev:backend      # Backend only (http://localhost:5000)
+npm run dev:frontend      # Frontend only (http://localhost:5173)
+npm run dev:backend       # Backend only (http://localhost:5000)  
+npm run dev:legacy        # Both services separately (old method)
 ```
 
-### Installation
-```bash
-npm run install:all      # Install both frontend and backend dependencies
-npm run install:backend  # Install backend dependencies only
-```
-
-### Production
+### Deployment
 ```bash
 npm run build            # Build frontend for production
-npm run preview          # Preview production build
+npm run deploy           # Deploy to Vercel with API routes
+npm run preview          # Preview production build locally
 ```
 
 ## 🔧 Configuration Status
@@ -53,19 +50,24 @@ npm run preview          # Preview production build
 
 ## 🌐 Current Setup
 
-### Frontend (.env)
+### Vercel Full-Stack (.env for Vercel)
 ```env
-VITE_API_URL=http://localhost:5000/api
-VITE_MOCK_API=false         # Uses real backend locally
-VITE_DEV_MODE=true
+# MongoDB Connection
+MONGODB_URI=mongodb+srv://...
+
+# JWT Configuration  
+JWT_SECRET=your-jwt-secret
+JWT_EXPIRES_IN=7d
+
+# Environment
+NODE_ENV=production
 ```
 
-### Backend (.env)
+### Local Development (.env.local)
 ```env
-PORT=5000
-CORS_ORIGIN=http://localhost:5173                           # Local development
-CORS_ORIGIN_PROD=https://student-panel-frontend-eight.vercel.app  # Production
-MONGODB_URI=mongodb+srv://...                               # Database connection
+VITE_API_URL=http://localhost:3000/api  # Vercel dev server
+VITE_MOCK_API=false                     # Uses Vercel API routes
+VITE_DEV_MODE=true
 ```
 
 ## 🎯 Next Steps

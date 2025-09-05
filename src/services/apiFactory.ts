@@ -2,7 +2,6 @@ import * as realApi from './api'
 import * as mockApi from './mockApi'
 
 // Determine which API to use based on environment
-// IMPORTANT: Always use mock API on Vercel deployments
 const isVercelDeployment = typeof window !== 'undefined' && (
   window.location.hostname.includes('vercel.app') || 
   window.location.hostname.includes('vercel.com') ||
@@ -10,26 +9,31 @@ const isVercelDeployment = typeof window !== 'undefined' && (
 )
 const isProduction = import.meta.env.PROD || (typeof window !== 'undefined' && window.location.hostname !== 'localhost')
 
-// Force mock API for all production deployments unless explicitly set to false
-// This ensures Vercel deployments always use mock API to avoid CORS issues
-const useMockApi = isVercelDeployment || 
-                   import.meta.env.VITE_MOCK_API === 'true' || 
-                   (isProduction && import.meta.env.VITE_MOCK_API !== 'false') ||
-                   (!import.meta.env.VITE_API_URL && isProduction)
+// Check if we have Vercel API routes available
+const hasVercelAPI = typeof window !== 'undefined' && isVercelDeployment
 
-// Debug logging (will be removed in production builds)
+// Use Vercel API if available, otherwise use mock API for production deployments
+const useMockApi = !hasVercelAPI && (
+  isVercelDeployment || 
+  import.meta.env.VITE_MOCK_API === 'true' || 
+  (isProduction && import.meta.env.VITE_MOCK_API !== 'false') ||
+  (!import.meta.env.VITE_API_URL && isProduction)
+)
+
+// Debug logging
 if (typeof window !== 'undefined') {
   if (import.meta.env.DEV) {
     console.log('🔧 API Factory Debug:', {
       hostname: window.location.hostname,
       isVercelDeployment,
       isProduction,
+      hasVercelAPI,
       VITE_MOCK_API: import.meta.env.VITE_MOCK_API,
       VITE_API_URL: import.meta.env.VITE_API_URL,
       useMockApi
     })
   } else if (isProduction) {
-    console.log('🚀 Production API Mode:', useMockApi ? 'Mock API' : 'Real API')
+    console.log('🚀 Production API Mode:', useMockApi ? 'Mock API' : hasVercelAPI ? 'Vercel API' : 'Real API')
   }
 }
 
