@@ -1,15 +1,7 @@
 import type { School, Student, User, DashboardStats } from '../types'
 
-// API Configuration - Dynamic based on environment
+// API Configuration - Always use environment variable
 const getAPIBaseURL = (): string => {
-  // For Vercel deployments, use relative API routes
-  if (typeof window !== 'undefined' && 
-      (window.location.hostname.includes('vercel.app') || 
-       window.location.hostname.includes('vercel.com'))) {
-    return '/api'
-  }
-  
-  // For local development or other deployments
   return import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 }
 
