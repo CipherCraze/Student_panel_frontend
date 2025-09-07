@@ -114,7 +114,7 @@ export function LoginPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-secondary-600">School Admin:</span>
-                  <span className="font-mono text-secondary-800">school@admin.com</span>
+                  <span className="font-mono text-secondary-800">hello@gmail.com</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-secondary-600">Super Password:</span>
@@ -122,7 +122,7 @@ export function LoginPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-secondary-600">School Password:</span>
-                  <span className="font-mono text-secondary-800">password</span>
+                  <span className="font-mono text-secondary-800">hello@123</span>
                 </div>
               </div>
               <div className="mt-3 p-2 bg-blue-50 rounded-lg border border-blue-200">
